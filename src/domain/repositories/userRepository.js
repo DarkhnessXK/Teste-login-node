@@ -1,68 +1,64 @@
-import { fs } from 'node:fs';
+import { promises as fs } from 'fs';
 
-
-class UserRepository {
+export class UserRepository {
     async getOne(id) {
-        const database = await this.readDatabase()
-        for (user of database) {
+        const database = await this.readDatabase();
+        for (const user of database) {
             if (user.id == id) {
-                return user
+                return user;
             }
         }
     }
+
     async save(user) {
-        let database = await this.readDatabase()
-        database.push(user)
-        const jsonStr = JSON.stringify(objetoJSON, null, 2)
-        await this.write(jsonStr)
+        let database = await this.readDatabase();
+        database.push(user);
+        const jsonStr = JSON.stringify(database, null, 2);
+        await this.write(jsonStr);
     }
 
-    delete(id) {}
-    update(id) {}
+    delete(id) {
+        // Implement delete logic
+    }
+
+    update(id) {
+        // Implement update logic
+    }
 
     write(jsonStr) {
         return new Promise((resolve, reject) => {
             fs.writeFile('database.json', jsonStr, (err) => {
                 if (err) {
-                reject(err);
+                    reject(err);
                 }
                 resolve(true);
             });
-
-        })
+        });
     }
-
 
     createDatabase() {
         return new Promise((resolve, reject) => {
             fs.writeFile('database.json', "[]", (err) => {
                 if (err) {
-                  reject(err);
+                    reject(err);
                 }
                 resolve(true);
             });
-
-        })
+        });
     }
 
     async readDatabase() {
         try {
-            return await _readDatabase()
-        } catch {
-            await this.createDatabase()
-            return await _readDatabase()
+            const databaseExists = await fs.access('database.json').then(() => true).catch(() => false);
+            if (!databaseExists) {
+                await this.createDatabase();
+            }
+            const data = await fs.readFile('database.json', 'utf8');
+            console.log('Database Content:', data);
+            return JSON.parse(data);
+        } catch (err) {
+            console.error('Error reading database:', err);
+            throw err;
         }
-    }
-
-    _readDatabase() {
-        return new Promise((resolve, reject) => {
-            fs.readFile('database.json', 'utf8', (err, data) => {
-                if (err) {
-                  reject(err)
-                }
-              
-                resolve(JSON.parse(data));
-            });
-        })
     }
 }
