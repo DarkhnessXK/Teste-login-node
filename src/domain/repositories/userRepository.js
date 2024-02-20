@@ -92,3 +92,18 @@ export class UserRepository {
         }
     }
 }
+
+
+class Database {
+
+    createTableIfNotExists(tablename) {}
+    createDatabase(databasename) {}
+
+}
+
+let db = new Database()
+db.createDatabase('database')
+db.createTableIfNotExists('table1')
+db.createTableIfNotExists('table2')
+db.createTableIfNotExists('table3')
+db.createTableIfNotExists('table4')
