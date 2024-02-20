@@ -8,5 +8,20 @@
     "id": "1",
     "username": "ricardo",
     "senha": "123456"
+  },
+  {
+    "id": 10,
+    "username": "Pedro",
+    "senha": "Minha senha"
+  },
+  {
+    "id": 11,
+    "username": "Maria",
+    "senha": "123456"
+  },
+  {
+    "id": 12,
+    "username": "Joice",
+    "senha": "123456"
   }
 ]

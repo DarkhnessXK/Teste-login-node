@@ -10,19 +10,49 @@ export class UserRepository {
         }
     }
 
+    async getOneByUsername(username) {
+        const database = await this.readDatabase();
+        for (const user of database) {
+            if (user.username == username) {
+                return user;
+            }
+        }
+    }
+
     async save(user) {
+        try {
+            let database = await this.readDatabase();
+            database.push(user);
+            const jsonStr = JSON.stringify(database, null, 2);
+            await this.write(jsonStr);
+        } catch (error) {
+            console.error('Error saving user:', error);
+            throw error;
+        }
+    }
+
+    async delete(id) {
         let database = await this.readDatabase();
-        database.push(user);
-        const jsonStr = JSON.stringify(database, null, 2);
-        await this.write(jsonStr);
+        const index = database.findIndex(user => user.id === id);
+        if (index !== -1) {
+            database.splice(index, 1);
+            const jsonStr = JSON.stringify(database, null, 2);
+            await this.write(jsonStr);
+            return true;
+        }
+        return false;
     }
 
-    delete(id) {
-        // Implement delete logic
-    }
-
-    update(id) {
-        // Implement update logic
+    async update(id, newData) {
+        let database = await this.readDatabase();
+        const index = database.findIndex(user => user.id === id);
+        if (index !== -1) {
+            database[index] = { ...database[index], ...newData };
+            const jsonStr = JSON.stringify(database, null, 2);
+            await this.write(jsonStr);
+            return true;
+        }
+        return false;
     }
 
     write(jsonStr) {
